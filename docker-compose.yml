@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-fleet}
+      - MYSQL_DATABASE=fleet
+    volumes: ["mysql:/var/lib/mysql"]
+  redis:
+    image: redis:7
+  fleet:
+    image: fleetdm/fleet:v4.56.0
+    environment:
+      - FLEET_MYSQL_ADDRESS=mysql:3306
+      - FLEET_MYSQL_DATABASE=fleet
+      - FLEET_MYSQL_USERNAME=root
+      - FLEET_MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-fleet}
+      - FLEET_REDIS_ADDRESS=redis:6379
+    ports: ["8080:8080"]
+    depends_on: [mysql, redis]
+volumes:
+  mysql:
